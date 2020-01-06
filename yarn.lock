@@ -886,6 +886,14 @@
   resolved "https://registry.yarnpkg.com/@csstools/normalize.css/-/normalize.css-10.1.0.tgz#f0950bba18819512d42f7197e56c518aa491cf18"
   integrity sha512-ij4wRiunFfaJxjB0BdrYHIH8FxBJpOwNPhhAcunlmPdXudL1WQV1qoP9un6JsEBAgQH+7UXyyjh0g7jTxXK6tg==
 
+"@dfuse/client@^0.3.5":
+  version "0.3.5"
+  resolved "https://registry.npm.taobao.org/@dfuse/client/download/@dfuse/client-0.3.5.tgz#437f3451d3f1ac255a4d3660528ec61ebfbd8957"
+  integrity sha1-Q380UdPxrCVaTTZgUo7GHr+9iVc=
+  dependencies:
+    "@types/debug" "^0.0.31"
+    debug "^4.1.0"
+
 "@hapi/address@2.x.x":
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@hapi/address/-/address-2.1.4.tgz#5d67ed43f3fd41a69d4b9ff7b56e7c0d1d0a81e5"
@@ -1260,6 +1268,11 @@
   integrity sha512-yGeB2dHEdvxjP0y4UbRtQaSkXJ9649fYCmIdRoul5kfAoGCwxuCbMhag0k3RPfnuh9kPGm8x89btcfDEXdVWGw==
   dependencies:
     "@babel/types" "^7.3.0"
+
+"@types/debug@^0.0.31":
+  version "0.0.31"
+  resolved "https://registry.npm.taobao.org/@types/debug/download/@types/debug-0.0.31.tgz#bac8d8aab6a823e91deb7f79083b2a35fa638f33"
+  integrity sha1-usjYqraoI+kd6395CDsqNfpjjzM=
 
 "@types/eslint-visitor-keys@^1.0.0":
   version "1.0.0"
