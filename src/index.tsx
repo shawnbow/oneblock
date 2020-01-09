@@ -5,6 +5,10 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import {store} from './store';
 import {Provider} from 'react-redux';
+import { setVars } from './store/actions';
+
+store.dispatch(setVars("count", 1));
+setInterval(()=>{store.dispatch(setVars("count", store.getState().vars.count + 1))}, 1000);
 
 ReactDOM.render(
   (
