@@ -1,24 +1,21 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+// import './App.css';
 import {connect} from 'react-redux';
-import { setVars } from './store/actions';
-import { store } from './store';
+import {getAccount, setAccount, startQuery, stopQuery, getQueryStatus, QUERY_STATUS} from './info';
 
 class App extends React.Component<any> {
   render () {
-    const {count, add} = this.props;
+    const {account, querying, onAccountChange, onQuery, onStop} = this.props;
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            { count }: {console.log(this.props)}
-          </p>
-          <button onClick={add}>
-            Learn React
-          </button>
-        </header>
+      <div>
+        <input type={"text"} placeholder={"Account"} value={account} onChange={(e)=>onAccountChange(e.target.value)} />
+        <button onClick={onQuery} disabled={querying} style={{marginLeft: '4px'}}>
+          Query
+        </button>
+        <button onClick={onStop} disabled={!querying} style={{marginLeft: '4px'}}>
+          Stop
+        </button>
+        <div> {"asdfad"} </div>
       </div>
     );
   }
@@ -26,18 +23,16 @@ class App extends React.Component<any> {
 
 const mapStateToProps = (state:any, ownProps:any) => {
   return {
-    count: state.vars.count
+    account: getAccount(),
+    querying: getQueryStatus() === QUERY_STATUS.ONGOING
   }
 }
 
-const dadd = ()=>{
-  return (dispatch:any)=>{
-    dispatch(setVars("count", store.getState().vars.count + 1));
-  }
-}
 const mapDispatchToProps = (dispatch:any, ownProps:any) => {
   return {
-    add: ()=>dispatch(dadd())
+    onAccountChange: (account: string)=>setAccount(account),
+    onQuery: ()=>startQuery(),
+    onStop: ()=>stopQuery()
   }
 }
 
