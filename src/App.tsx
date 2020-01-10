@@ -30,9 +30,14 @@ const mapStateToProps = (state:any, ownProps:any) => {
   }
 }
 
+const dadd = ()=>{
+  return (dispatch:any)=>{
+    dispatch(setVars("count", store.getState().vars.count + 1));
+  }
+}
 const mapDispatchToProps = (dispatch:any, ownProps:any) => {
   return {
-    add: ()=>dispatch(setVars("count", store.getState().vars.count + 1))
+    add: ()=>dispatch(dadd())
   }
 }
 
