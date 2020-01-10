@@ -14,7 +14,7 @@ interface IEOSTokenAccountsRow {
 }
 
 export async function fetchBlockIdByTime(date: Date) {
-  const {block} = await getClient().fetchBlockIdByTime(date, "gte");
+  const { block } = await getClient().fetchBlockIdByTime(date, "gte");
   return block.num;
 }
 

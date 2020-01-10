@@ -1,62 +1,80 @@
 import { getVars, setVars } from "./store";
 import {gqlTransferInfo, ITransferInfo} from "./network/dfuse";
 
-// account
-export function getAccount(): string {
-  return getVars().account || "";
-}
+// Transfer Info
+// function fillTransfer(tx: ITransferInfo) {
+//   const account = "";
+//   if (account.length === 0) {
+//     eraseTransferStatsInfo();
+//     return;
+//   }
 
-export function setAccount(account:string) {
-  setVars("account", account);
-}
+//   let txstatsinfo = getTransferStatsInfo();
+//   let txAccount = ""
+//   let quantity = parseFloat(tx.quantity) * 10000;
+//   if (tx.from !== account && tx.to === account) {
+//     txAccount = tx.from
+//   } else if (tx.from === account && tx.to !== account) {
+//     txAccount = tx.to
+//     quantity = -quantity
+//   } else {
+//     return;
+//   }
+//   let stats = txstatsinfo[txAccount] || {quantity:0, txCount:0};
+//   stats.quantity += quantity;
+//   stats.txCount ++;
+//   setVars("txstatsinfo", {...txstatsinfo, [txAccount]: stats });
+// }
+// function eraseTransferStatsInfo() {
+//   setVars("txstatsinfo", {});
+// }
 
-
-// Query
+// query status
 export enum QUERY_STATUS {
   STOPPED,
   ONGOING
 }
-export function getQueryStatus():QUERY_STATUS {
-  return getVars().queryStatus || QUERY_STATUS.STOPPED;
+export function getQueryStatus(): boolean {
+  let status =  getVars().querystatus || QUERY_STATUS.STOPPED;
+  return status === QUERY_STATUS.ONGOING;
+}
+export function setQueryStatus(status: QUERY_STATUS) {
+  setVars("querystatus", status);
 }
 
-export function getTransferStatsInfo() {
-  return getVars().txstatsinfo || {};
+// query info
+interface IQueryInfo {
+  account: string;
+  accountinfo: any;
+  transferinfo: any;
+  statsinfo: any;
 }
-function fillTransfer(tx: ITransferInfo) {
-  const account = getAccount();
-  if (account.length === 0) {
-    eraseTransferStatsInfo();
-    return;
-  }
-
-  let txstatsinfo = getTransferStatsInfo();
-  let txAccount = ""
-  let quantity = parseFloat(tx.quantity) * 10000;
-  if (tx.from !== account && tx.to === account) {
-    txAccount = tx.from
-  } else if (tx.from === account && tx.to !== account) {
-    txAccount = tx.to
-    quantity = -quantity
-  } else {
-    return;
-  }
-  let stats = txstatsinfo[txAccount] || {quantity:0, txCount:0};
-  stats.quantity += quantity;
-  stats.txCount ++;
-  setVars("txstatsinfo", {...txstatsinfo, [txAccount]: stats });
+const nullQueryInfo: IQueryInfo = {
+  account: "",
+  accountinfo: {},
+  transferinfo: {},
+  statsinfo:{}
+};
+export function getQueryInfo(): IQueryInfo {
+  return getVars().queryinfo || nullQueryInfo;
 }
-function eraseTransferStatsInfo() {
-  setVars("txstatsinfo", {});
+export function initQueryInfo() {
+  setVars("queryinfo", nullQueryInfo);
+}
+export function setQueryInfo(info: IQueryInfo) {
+  setVars("queryinfo", info);
 }
 
-export async function startQuery() {
-  setVars("queryStatus", QUERY_STATUS.ONGOING);
-  eraseTransferStatsInfo();
-  const {client, stream} = await gqlTransferInfo(getAccount(), 100, fillTransfer);
-  console.log("afdsAFASDFASDFASDFASDFASDFASDFASDFADSF")
+export async function startQuery(account: string) {
+  setQueryStatus(QUERY_STATUS.ONGOING);
+  initQueryInfo();
+  let queryinfo = getQueryInfo();
+  setQueryInfo({...queryinfo, account: account});
+
+  // const {client, stream} = await gqlTransferInfo(getAccount(), 100, fillTransfer);
+  // console.log("afdsAFASDFASDFASDFASDFASDFASDFASDFADSF")
 }
 
 export function stopQuery() {
-  setVars("queryStatus", QUERY_STATUS.STOPPED);
+  setQueryStatus(QUERY_STATUS.STOPPED);
 }

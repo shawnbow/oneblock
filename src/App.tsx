@@ -1,21 +1,23 @@
 import React from 'react';
 // import './App.css';
 import {connect} from 'react-redux';
-import {getAccount, setAccount, startQuery, stopQuery, getQueryStatus, QUERY_STATUS, getTransferStatsInfo} from './info';
+import {startQuery, stopQuery, getQueryStatus, getQueryInfo} from './info';
 
 class App extends React.Component<any> {
+  inputRef:any = React.createRef();
+
   render () {
-    const {account, querying, onAccountChange, onQuery, onStop} = this.props;
+    const {account, querying, onQuery, onStop} = this.props;
     return (
       <div>
-        <input type={"text"} placeholder={"EOS Account"} value={account} onChange={(e)=>onAccountChange(e.target.value)} />
-        <button onClick={onQuery} disabled={querying} style={{marginLeft: '4px'}}>
+        <input type={"text"} placeholder={"EOS Account"} ref={this.inputRef} />
+        <button onClick={()=>onQuery(this.inputRef.current.value)} disabled={querying} style={{marginLeft: '4px'}}>
           Query
         </button>
         <button onClick={onStop} disabled={!querying} style={{marginLeft: '4px'}}>
           Stop
         </button>
-        <div> {"asdfad"} </div>
+        <div> {account} </div>
       </div>
     );
   }
@@ -23,16 +25,15 @@ class App extends React.Component<any> {
 
 const mapStateToProps = (state:any, ownProps:any) => {
   return {
-    account: getAccount(),
-    querying: getQueryStatus() === QUERY_STATUS.ONGOING,
-    data: getTransferStatsInfo()
+    querying: getQueryStatus(),
+    account: getQueryInfo().account,
+    queryinfo: getQueryInfo()
   }
 }
 
 const mapDispatchToProps = (dispatch:any, ownProps:any) => {
   return {
-    onAccountChange: (account: string)=>setAccount(account),
-    onQuery: ()=>startQuery(),
+    onQuery: (account: string)=>startQuery(account),
     onStop: ()=>stopQuery()
   }
 }
