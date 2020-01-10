@@ -45,13 +45,13 @@ export function setQueryStatus(status: QUERY_STATUS) {
 // query info
 interface IQueryInfo {
   account: string;
-  accountinfo: any;
+  baseinfo: any;
   transferinfo: any;
   statsinfo: any;
 }
 const nullQueryInfo: IQueryInfo = {
   account: "",
-  accountinfo: {},
+  baseinfo: {},
   transferinfo: {},
   statsinfo:{}
 };
