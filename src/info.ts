@@ -1,5 +1,5 @@
 import { getVars, setVars } from "./store";
-import {fetchBalance, ITransferInfo} from "./network/dfuse";
+import {gqlTransferInfo, ITransferInfo} from "./network/dfuse";
 
 // account
 export function getAccount(): string {
@@ -35,7 +35,6 @@ function fillTransfer(tx: ITransferInfo) {
   let quantity = parseFloat(tx.quantity) * 10000;
   if (tx.from !== account && tx.to === account) {
     txAccount = tx.from
-    quantity = quantity;
   } else if (tx.from === account && tx.to !== account) {
     txAccount = tx.to
     quantity = -quantity
@@ -45,16 +44,17 @@ function fillTransfer(tx: ITransferInfo) {
   let stats = txstatsinfo[txAccount] || {quantity:0, txCount:0};
   stats.quantity += quantity;
   stats.txCount ++;
-  setVars("txstatsinfo", {...txstatsinfo, txAccount: stats });
+  setVars("txstatsinfo", {...txstatsinfo, [txAccount]: stats });
 }
 function eraseTransferStatsInfo() {
   setVars("txstatsinfo", {});
 }
 
-export function startQuery() {
+export async function startQuery() {
   setVars("queryStatus", QUERY_STATUS.ONGOING);
-  const {balance} = await fetchBalance(getAccount());
-  console.log(balance);
+  eraseTransferStatsInfo();
+  const {client, stream} = await gqlTransferInfo(getAccount(), 100, fillTransfer);
+  console.log("afdsAFASDFASDFASDFASDFASDFASDFASDFADSF")
 }
 
 export function stopQuery() {

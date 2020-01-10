@@ -1,7 +1,7 @@
 import React from 'react';
 // import './App.css';
 import {connect} from 'react-redux';
-import {getAccount, setAccount, startQuery, stopQuery, getQueryStatus, QUERY_STATUS} from './info';
+import {getAccount, setAccount, startQuery, stopQuery, getQueryStatus, QUERY_STATUS, getTransferStatsInfo} from './info';
 
 class App extends React.Component<any> {
   render () {
@@ -24,7 +24,8 @@ class App extends React.Component<any> {
 const mapStateToProps = (state:any, ownProps:any) => {
   return {
     account: getAccount(),
-    querying: getQueryStatus() === QUERY_STATUS.ONGOING
+    querying: getQueryStatus() === QUERY_STATUS.ONGOING,
+    data: getTransferStatsInfo()
   }
 }
 
