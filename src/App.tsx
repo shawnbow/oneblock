@@ -8,7 +8,7 @@ class App extends React.Component<any> {
     const {account, querying, onAccountChange, onQuery, onStop} = this.props;
     return (
       <div>
-        <input type={"text"} placeholder={"Account"} value={account} onChange={(e)=>onAccountChange(e.target.value)} />
+        <input type={"text"} placeholder={"EOS Account"} value={account} onChange={(e)=>onAccountChange(e.target.value)} />
         <button onClick={onQuery} disabled={querying} style={{marginLeft: '4px'}}>
           Query
         </button>
@@ -36,5 +36,4 @@ const mapDispatchToProps = (dispatch:any, ownProps:any) => {
   }
 }
 
-// export default App;
 export default connect(mapStateToProps, mapDispatchToProps)(App);
