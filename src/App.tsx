@@ -33,7 +33,7 @@ const mapStateToProps = (state:any, ownProps:any) => {
 
 const mapDispatchToProps = (dispatch:any, ownProps:any) => {
   return {
-    onQuery: (account: string)=>startQuery(account),
+    onQuery: (account: string)=>{ account.length > 0 && startQuery(account) },
     onStop: ()=>stopQuery()
   }
 }

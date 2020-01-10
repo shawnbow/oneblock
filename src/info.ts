@@ -58,16 +58,14 @@ const nullQueryInfo: IQueryInfo = {
 export function getQueryInfo(): IQueryInfo {
   return getVars().queryinfo || nullQueryInfo;
 }
-export function initQueryInfo() {
-  setVars("queryinfo", nullQueryInfo);
-}
 export function setQueryInfo(info: IQueryInfo) {
   setVars("queryinfo", info);
 }
 
 export async function startQuery(account: string) {
   setQueryStatus(QUERY_STATUS.ONGOING);
-  initQueryInfo();
+  setQueryInfo(nullQueryInfo); // erase older query info
+
   let queryinfo = getQueryInfo();
   setQueryInfo({...queryinfo, account: account});
 
