@@ -59,7 +59,6 @@ class DfuseContext {
     this._stream = await this.client.graphql(gql, (message, stream) => {
       if (message.type === "error") {
         console.log("An error occurred", message.errors, message.terminal);
-        stream.close();
         onError(message);
         return;
       }
@@ -78,7 +77,6 @@ class DfuseContext {
 
       if (message.type === "complete") {
         console.log("Stream completed");
-        stream.close();
         onComplete();
         return;
       }

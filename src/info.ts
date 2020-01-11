@@ -63,16 +63,16 @@ export async function startQuery(account: string) {
        return;
       }
       let info = getQueryInfo();
-      info.transferinfo.fill({peer, amount, memo, blockNum, timestamp});
+      info.transferinfo.push({peer, amount, memo, blockNum, timestamp});
       // Todo: add statsinfo
       setQueryInfo(info);
     },
     () => {
-      setQueryStatus(QUERY_STATUS.STOPPED);
+      stopQuery();
     },
     (msg) => {
-      setQueryStatus(QUERY_STATUS.STOPPED);
       console.log(msg);
+      stopQuery();
     });
     return;
 }
