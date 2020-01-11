@@ -27,6 +27,7 @@ const mapStateToProps = (state:any, ownProps:any) => {
   return {
     querying: getQueryStatus() > QUERY_STATUS.STOPPED,
     account: getQueryInfo().account,
+    len: getQueryInfo().transferinfo.length,
     queryinfo: getQueryInfo()
   }
 }

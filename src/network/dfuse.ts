@@ -70,7 +70,7 @@ class DfuseContext {
         actions.forEach(({ json }: any) => {
           const { from, to, quantity, memo } = json
           onData({from, to , quantity, memo, blockNum: num, timestamp });
-          console.log(`${from} transfer ${to} ${quantity} ${num}`);
+          // console.log(`${from} transfer ${to} ${quantity} ${num}`);
         })
         stream.mark({ cursor: data.cursor })
       }
