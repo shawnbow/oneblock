@@ -1,7 +1,7 @@
 import React from 'react';
 // import './App.css';
 import {connect} from 'react-redux';
-import {startQuery, stopQuery, getQueryStatus, getQueryInfo} from './info';
+import {startQuery, stopQuery, getQueryStatus, QUERY_STATUS, getQueryInfo} from './info';
 
 class App extends React.Component<any> {
   inputRef:any = React.createRef();
@@ -25,7 +25,7 @@ class App extends React.Component<any> {
 
 const mapStateToProps = (state:any, ownProps:any) => {
   return {
-    querying: getQueryStatus(),
+    querying: getQueryStatus() > QUERY_STATUS.STOPPED,
     account: getQueryInfo().account,
     queryinfo: getQueryInfo()
   }

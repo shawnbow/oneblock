@@ -34,9 +34,8 @@ export enum QUERY_STATUS {
   STOPPED,
   ONGOING
 }
-export function getQueryStatus(): boolean {
-  let status =  getVars().querystatus || QUERY_STATUS.STOPPED;
-  return status === QUERY_STATUS.ONGOING;
+export function getQueryStatus(): QUERY_STATUS {
+  return getVars().querystatus || QUERY_STATUS.STOPPED;
 }
 export function setQueryStatus(status: QUERY_STATUS) {
   setVars("querystatus", status);
@@ -70,7 +69,6 @@ export async function startQuery(account: string) {
   setQueryInfo({...queryinfo, account: account});
 
   // const {client, stream} = await gqlTransferInfo(getAccount(), 100, fillTransfer);
-  // console.log("afdsAFASDFASDFASDFASDFASDFASDFASDFADSF")
 }
 
 export function stopQuery() {
