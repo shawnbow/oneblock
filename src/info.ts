@@ -1,7 +1,6 @@
 import { getVars, setVars } from "./store";
 import { dfuse } from "./network/dfuse";
 import { eos } from "./network/eos";
-import { async } from "q";
 
 // query status
 export enum QUERY_STATUS {
@@ -84,7 +83,6 @@ export async function startQuery(account: string) {
     return;
 }
 
-export async function stopQuery() {
+export function stopQuery() {
   setQueryStatus(QUERY_STATUS.STOPPED);
-  await dfuse.closeStream();
 }

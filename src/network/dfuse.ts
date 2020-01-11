@@ -18,8 +18,6 @@ class DfuseContext {
     apiKey: DFUSE_API_KEY
   });
 
-  private _stream: any = undefined;
-
   async fetchBalance(account: string, atBlock?: number): Promise<{ balance: string; blockNum: number | undefined }> {
     const options = { blockNum: atBlock === undefined ? undefined : atBlock, json: true };
     const response = await this.client.stateTable<{ balance: string }>(
@@ -39,10 +37,10 @@ class DfuseContext {
     return block.num;
   }
 
-  async subscribeTransferInfo(account: string, lowBlockNum: number, highBlockNum: number, onData: (tx: ITransferInfo)=>void, onComplete: ()=>void, onError: (msg:any)=>void) {
+  subscribeTransferInfo(account: string, lowBlockNum: number, highBlockNum: number, onData: (tx: ITransferInfo)=>void, onComplete: ()=>void, onError: (msg:any)=>void) {
     const gql = `subscription ($cursor: String) {
       searchTransactionsForward(
-        query: "account:eosio.token receiver:eosio.token (data.from:${account} OR data.to:${account}) -data.quantity:'0.0001 EOS' -data.quantity:'0.0002 EOS' -data.quantity:'0.0003 EOS'",
+        query: "account:eosio.token receiver:eosio.token (data.from:${account} OR data.to:${account})",
         cursor: $cursor, lowBlockNum: ${lowBlockNum}, highBlockNum: ${highBlockNum}
       ) {
         undo
@@ -56,10 +54,10 @@ class DfuseContext {
       }
     }`;
 
-    this._stream = await this.client.graphql(gql, (message, stream) => {
+    this.client.graphql(gql, (message, stream) => {
       if (message.type === "error") {
         console.log("An error occurred", message.errors, message.terminal);
-        onError(message);
+        stream.close().then(()=>onError(message));
         return;
       }
 
@@ -77,17 +75,10 @@ class DfuseContext {
 
       if (message.type === "complete") {
         console.log("Stream completed");
-        onComplete();
+        stream.close().then(()=>onComplete());
         return;
       }
     });
-  }
-
-  async closeStream() {
-    if (this._stream) {
-      await this._stream.close();
-      this._stream = undefined;
-    }
   }
 }
 
