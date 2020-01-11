@@ -1,33 +1,6 @@
 import { getVars, setVars } from "./store";
-import {gqlTransferInfo, ITransferInfo} from "./network/dfuse";
-
-// Transfer Info
-// function fillTransfer(tx: ITransferInfo) {
-//   const account = "";
-//   if (account.length === 0) {
-//     eraseTransferStatsInfo();
-//     return;
-//   }
-
-//   let txstatsinfo = getTransferStatsInfo();
-//   let txAccount = ""
-//   let quantity = parseFloat(tx.quantity) * 10000;
-//   if (tx.from !== account && tx.to === account) {
-//     txAccount = tx.from
-//   } else if (tx.from === account && tx.to !== account) {
-//     txAccount = tx.to
-//     quantity = -quantity
-//   } else {
-//     return;
-//   }
-//   let stats = txstatsinfo[txAccount] || {quantity:0, txCount:0};
-//   stats.quantity += quantity;
-//   stats.txCount ++;
-//   setVars("txstatsinfo", {...txstatsinfo, [txAccount]: stats });
-// }
-// function eraseTransferStatsInfo() {
-//   setVars("txstatsinfo", {});
-// }
+import { dfuse } from "./network/dfuse";
+import { eos } from "./network/eos";
 
 // query status
 export enum QUERY_STATUS {
@@ -45,32 +18,66 @@ export function setQueryStatus(status: QUERY_STATUS) {
 interface IQueryInfo {
   account: string;
   baseinfo: any;
-  transferinfo: any;
+  transferinfo: Array<{
+    peer: string;
+    amount: number;
+    memo: string;
+    blockNum: number;
+    timestamp: string;
+  }>;
   statsinfo: any;
 }
 const nullQueryInfo: IQueryInfo = {
   account: "",
   baseinfo: {},
-  transferinfo: {},
+  transferinfo: [],
   statsinfo:{}
 };
 export function getQueryInfo(): IQueryInfo {
   return getVars().queryinfo || nullQueryInfo;
 }
-export function setQueryInfo(info: IQueryInfo) {
+export function setQueryInfo(info: IQueryInfo): IQueryInfo {
   setVars("queryinfo", info);
+  return getQueryInfo();
 }
 
 export async function startQuery(account: string) {
   setQueryStatus(QUERY_STATUS.ONGOING);
-  setQueryInfo(nullQueryInfo); // erase older query info
+  let queryinfo = setQueryInfo(nullQueryInfo); // erase older query info
 
-  let queryinfo = getQueryInfo();
-  setQueryInfo({...queryinfo, account: account});
+  queryinfo.account = account;
+  queryinfo.baseinfo = await eos.fetchAccountInfo(account);
+  setQueryInfo(queryinfo);
 
-  // const {client, stream} = await gqlTransferInfo(getAccount(), 100, fillTransfer);
+  const highBlockNum = await dfuse.fetchBlockIdByTime(new Date());
+  dfuse.subscribeTransferInfo(account, 1024, highBlockNum,
+    ({from, to, quantity, memo, blockNum, timestamp}) => {
+      let peer = ""
+      let amount = parseFloat(quantity) * 10000;
+      if (from !== account && to === account) {
+        peer = from
+      } else if (from === account && to !== account) {
+        peer = to
+        amount = -amount
+      } else {
+       return;
+      }
+      let info = getQueryInfo();
+      info.transferinfo.fill({peer, amount, memo, blockNum, timestamp});
+      // Todo: add statsinfo
+      setQueryInfo(info);
+    },
+    () => {
+      setQueryStatus(QUERY_STATUS.STOPPED);
+    },
+    (msg) => {
+      setQueryStatus(QUERY_STATUS.STOPPED);
+      console.log(msg);
+    });
+    return;
 }
 
 export function stopQuery() {
   setQueryStatus(QUERY_STATUS.STOPPED);
+  dfuse.closeStream();
 }
