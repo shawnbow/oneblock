@@ -15,19 +15,20 @@ export function setQueryStatus(status: QUERY_STATUS) {
 }
 
 // query info
-interface IQueryInfo {
+export interface ITxInfo {
+  peer: string;
+  amount: number;
+  memo: string;
+  blockNum: number;
+  timestamp: string;
+}
+export interface IQueryInfo {
   account: string;
   baseinfo: any;
-  transferinfo: Array<{
-    peer: string;
-    amount: number;
-    memo: string;
-    blockNum: number;
-    timestamp: string;
-  }>;
+  transferinfo: Array<ITxInfo>;
   statsinfo: any;
 }
-const newQueryInfo = ():IQueryInfo => {
+const newQueryInfo = (): IQueryInfo => {
   return {
     account: "",
     baseinfo: {},
@@ -66,23 +67,18 @@ export async function startQuery(account: string) {
        return;
       }
 
-      console.log(queryinfo.transferinfo.length);
       queryinfo.transferinfo.push({peer, amount, memo, blockNum, timestamp});
       // Todo: add statsinfo
       setQueryInfo(queryinfo);
     },
     () => {
-      stopQuery();
+      setQueryStatus(QUERY_STATUS.STOPPED);
     },
     (msg) => {
       console.log(msg);
-      stopQuery();
+      setQueryStatus(QUERY_STATUS.STOPPED);
       queryinfo = newQueryInfo();
       setQueryInfo(queryinfo);
     });
     return;
-}
-
-export function stopQuery() {
-  setQueryStatus(QUERY_STATUS.STOPPED);
 }
